@@ -44,7 +44,7 @@ public interface BankService {
     void deleteContact(Long id);
 
     /**
-     * Delete {@link Application}
+     * Delete {@link Application} by id
      * @param id application
      */
     void deleteApplication(Long id);
