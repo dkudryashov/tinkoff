@@ -1,5 +1,7 @@
 package ru.dkudryashov.handler;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -7,26 +9,29 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Objects;
+
 /**
  * Created by Dmitry on 04.04.17.
  */
 @ControllerAdvice
 public class BankExceptionHandler {
 
-    @ExceptionHandler(value = Exception.class)
-    protected ResponseEntity<String> handleException(RuntimeException ex, WebRequest request) {
-        return new ResponseEntity<>(
-                "Internal server error, contact the administrator",
-                HttpStatus.INTERNAL_SERVER_ERROR
-        );
+    private final Logger logger = LoggerFactory.getLogger(BankExceptionHandler.class);
+
+    @ExceptionHandler(Exception.class)
+    void handleException(HttpServletResponse response, RuntimeException ex) throws IOException {
+        logger.error("Exception in server: {}", ex.getMessage());
+        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler(value = DataAccessException.class)
-    protected ResponseEntity<String> handleExceptionNotFound(RuntimeException ex, WebRequest request) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(DataAccessException.class)
+    protected ResponseEntity<String> handleExceptionNotFound(DataAccessException ex, WebRequest request) {
+        String body = Objects.nonNull(ex) && Objects.nonNull(ex.getCause()) ? ex.getCause().getMessage() : "Database error";
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
-
-
 
 
 }

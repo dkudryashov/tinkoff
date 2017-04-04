@@ -26,7 +26,7 @@ public class Application implements Serializable {
     @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
     private Date dtCreated;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "contact_ID")
     private Contact contact;
 
@@ -60,5 +60,25 @@ public class Application implements Serializable {
 
     public void setContact(Contact contact) {
         this.contact = contact;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Application that = (Application) o;
+
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        if (productName != null ? !productName.equals(that.productName) : that.productName != null) return false;
+        return dtCreated != null ? dtCreated.equals(that.dtCreated) : that.dtCreated == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (productName != null ? productName.hashCode() : 0);
+        result = 31 * result + (dtCreated != null ? dtCreated.hashCode() : 0);
+        return result;
     }
 }
