@@ -1,6 +1,7 @@
 package ru.dkudryashov.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -11,6 +12,8 @@ import java.sql.Date;
  * Created by Dmitry on 04.04.17.
  */
 @Entity
+@Cacheable
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Table(name = "APPLICATION")
 @XmlRootElement
 public class Application implements Serializable {
